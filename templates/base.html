@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}FleetFlow{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+</head>
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    if (sidebar.style.left === "0px") {
+        sidebar.style.left = "-250px";
+    } else {
+        sidebar.style.left = "0px";
+    }
+}
+</script>
+<body>
+<nav class="navbar">
+    <div class="nav-left">
+        <span class="menu-toggle" onclick="toggleSidebar()">☰</span>
+        <span class="brand">FleetFlow</span>
+    </div>
+
+    <div class="nav-right">
+        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<div id="sidebar" class="sidebar">
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'driver-management' %}">Drivers</a>
+    <a href="{% url 'trip-management' %}">Trips</a>
+    <a href="{% url 'maintenance_management' %}">Maintenance</a>
+    <a href="{% url 'financial_analytics' %}">Financials</a>
+    <a href="{% url 'operational_reports' %}">Reports</a>
+</div>
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>
