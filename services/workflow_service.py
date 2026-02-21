@@ -22,34 +22,41 @@ ALLOWED_TRANSITIONS = {
 def transition(work_item, new_status, user):
     current_status = work_item.status
 
-    # Check if transition is allowed structurally
+    #Structural transition validation
     if new_status not in ALLOWED_TRANSITIONS.get(current_status, []):
-        raise ValidationError(
-            f"Cannot transition from {current_status} to {new_status}."
-        )
+        raise ValidationError(f"Cannot transition from {current_status} to {new_status}.")
 
-    # Role-based rules
+    # DISPATCHED → Only Dispatcher or Fleet Manager
     if new_status == WorkItem.TripStatus.DISPATCHED:
-        if user.role != "ADMIN":
-            raise ValidationError("Only Admin can assign work items.")
+        if not user.is_dispatcher and not user.is_manager:
+            raise ValidationError(
+                "Only Dispatcher or Fleet Manager can dispatch trips."
+            )
 
-        if not work_item.assigned_to:
-            raise ValidationError("Must select staff before assigning.")
+        if not work_item.driver:
+            raise ValidationError("Must select a driver before dispatching.")
 
+        if not work_item.vehicle:
+            raise ValidationError("Must select a vehicle before dispatching.")
+
+    # IN_PROGRESS → Only assigned driver
     if new_status == WorkItem.TripStatus.IN_PROGRESS:
-        if user != work_item.assigned_to:
-            raise ValidationError("Only assigned staff can start work.")
+        if user != work_item.driver:
+            raise ValidationError(
+                "Only the assigned driver can start the trip."
+            )
 
+    # COMPLETED → Only assigned driver
     if new_status == WorkItem.TripStatus.COMPLETED:
-        if user != work_item.assigned_to:
-            raise ValidationError("Only assigned staff can complete work.")
+        if user != work_item.driver:
+            raise ValidationError(
+                "Only the assigned driver can complete the trip."
+            )
 
-    # Apply transition
     work_item.status = new_status
     work_item.full_clean()
     work_item.save()
 
-    # Log activity
     ActivityLog.objects.create(
         work_item=work_item,
         action=f"Status changed to {new_status}",
