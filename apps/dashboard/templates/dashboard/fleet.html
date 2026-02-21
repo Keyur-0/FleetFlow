@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<h1>Fleet Overview</h1>
+
+<div class="grid">
+
+    <div class="card">
+        <h2>Total Revenue</h2>
+        <p>₹{{ total_revenue|intcomma }}</p>
+    </div>
+
+    <div class="card">
+        <h2>Total Operational Cost</h2>
+        <p>₹{{ total_operational_cost|intcomma }}</p>
+    </div>
+
+    <div class="card">
+        <h2>Total Profit</h2>
+        <p class="{% if total_profit >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
+            ₹{{ total_profit|intcomma }}
+        </p>
+    </div>
+
+    <div class="card">
+        <h2>Active Vehicles</h2>
+        <p>{{ active_vehicles }}</p>
+    </div>
+
+    <div class="card">
+        <h2>Vehicles in Maintenance</h2>
+        <p>{{ vehicles_in_maintenance }}</p>
+    </div>
+
+    <div class="card">
+        <h2>Active Trips</h2>
+        <p>{{ active_trips }}</p>
+    </div>
+
+    <div class="card">
+        <h2>Fuel Cost This Month</h2>
+        <p>₹{{ fuel_cost_this_month|intcomma }}</p>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,6 +1,21 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+"""
+Custom User model for FleetFlow.
+
+Extends Django's AbstractUser to implement
+Role-Based Access Control (RBAC).
+
+Defines system roles:
+- Fleet Manager
+- Dispatcher
+- Safety Officer
+- Financial Analyst
+
+All permission and navigation logic depends on this model.
+"""
+
 
 class User(AbstractUser):
 

@@ -4,6 +4,21 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.db.models import Sum
 
+"""
+Core business models for FleetFlow.
+
+Defines operational entities:
+- WorkItem (Trip lifecycle management)
+- Vehicle (Asset tracking + financial metrics)
+- Driver (Compliance & duty management)
+- MaintenanceLog (Preventative/reactive service)
+- FuelLog (Fuel cost tracking + odometer sync)
+- ActivityLog (Audit trail)
+
+Implements rule-based validation and financial aggregation
+at the model level for data integrity.
+"""
+
 class WorkItem(models.Model):
 
     class TripStatus(models.TextChoices):
@@ -22,8 +37,6 @@ class WorkItem(models.Model):
         default=TripStatus.DRAFT,
         db_index=True,
     )
-
-    # 🔥 NEW FIELDS
 
     vehicle = models.ForeignKey(
         "Vehicle",
@@ -299,10 +312,9 @@ class FuelLog(models.Model):
             )
 
     def save(self, *args, **kwargs):
-        self.full_clean()  # <-- THIS is missing
+        self.full_clean() 
         super().save(*args, **kwargs)
 
-        # Update vehicle odometer after successful save
         if self.odometer_reading > self.vehicle.odometer_current:
             self.vehicle.odometer_current = self.odometer_reading
             self.vehicle.save()
