@@ -38,6 +38,16 @@ def transition(work_item, new_status, user):
         if not work_item.driver:
             raise ValidationError("Driver must be selected.")
 
+        # Driver compliance checks
+        if not work_item.driver.is_license_valid():
+            raise ValidationError("Driver license has expired.")
+
+        if work_item.driver.status == work_item.driver.Status.SUSPENDED:
+            raise ValidationError("Driver is suspended.")
+
+        if work_item.driver.status == work_item.driver.Status.OFF_DUTY:
+            raise ValidationError("Driver is off duty.")
+        
         vehicle_active_trip = WorkItem.objects.filter(
             vehicle=work_item.vehicle,
             status__in=[
@@ -64,11 +74,7 @@ def transition(work_item, new_status, user):
             )
 
         # Capacity validation
-        if (
-            work_item.cargo_weight
-            and work_item.vehicle.max_capacity
-            and work_item.cargo_weight > work_item.vehicle.max_capacity
-        ):
+        if work_item.cargo_weight > work_item.vehicle.max_capacity:
             raise ValidationError("Cargo exceeds vehicle capacity.")
 
     # IN_PROGRESS → Only assigned driver

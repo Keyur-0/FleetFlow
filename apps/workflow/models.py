@@ -127,30 +127,31 @@ class Vehicle(models.Model):
 
 class Driver(models.Model):
 
+    class Status(models.TextChoices):
+        ON_DUTY = "ON_DUTY", "On Duty"
+        OFF_DUTY = "OFF_DUTY", "Off Duty"
+        SUSPENDED = "SUSPENDED", "Suspended"
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="driver_profile",
+        on_delete=models.CASCADE
     )
 
     license_expiry = models.DateField()
 
-    safety_score = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        default=100.00,
-        help_text="Driver safety score (0-100)",
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.ON_DUTY,
+        db_index=True
     )
 
-    is_suspended = models.BooleanField(default=False, db_index=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ["user__username"]
+    def is_license_valid(self):
+        from datetime import date
+        return self.license_expiry >= date.today()
 
     def __str__(self):
         return f"{self.user.username} (Driver)"
-
 
 class ActivityLog(models.Model):
     work_item = models.ForeignKey(
