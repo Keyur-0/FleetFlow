@@ -12,11 +12,6 @@ class WorkItem(models.Model):
         COMPLETED = "COMPLETED", "Completed"
         CANCELLED = "CANCELLED", "Cancelled"
 
-    class Priority(models.TextChoices):
-        LOW = "LOW", "Low"
-        MEDIUM = "MEDIUM", "Medium"
-        HIGH = "HIGH", "High"
-
     title = models.CharField(max_length=255)
     description = models.TextField()
 
@@ -27,36 +22,66 @@ class WorkItem(models.Model):
         db_index=True,
     )
 
-    priority = models.CharField(
-        max_length=10,
-        choices=Priority.choices,
-        default=Priority.MEDIUM,
-    )
-
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="created_work_items",
     )
 
-    assigned_to = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="assigned_work_items",
-    )
-
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def clean(self):
-        if self.status == self.TripStatus.COMPLETED and not self.assigned_to:
-            raise ValidationError("Cannot complete a work item without assignment.")
+    class Meta:
+        indexes = [
+        models.Index(fields=["status", "created_at"]),
+        ]
 
     def __str__(self):
         return f"{self.title} ({self.status})"
     
+
+class Vehicle(models.Model):
+
+    class VehicleType(models.TextChoices):
+        TRUCK = "TRUCK", "Truck"
+        VAN = "VAN", "Van"
+        BIKE = "BIKE", "Bike"
+
+    name = models.CharField(max_length=100)
+
+    license_plate = models.CharField(
+        max_length=20,
+        unique=True,
+    )
+
+    vehicle_type = models.CharField(
+        max_length=20,
+        choices=VehicleType.choices,
+        db_index=True,
+    )
+
+    max_capacity = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        help_text="Maximum cargo capacity in kg"
+    )
+
+    acquisition_cost = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        help_text="Initial purchase cost"
+    )
+
+    odometer_current = models.PositiveIntegerField()
+    is_retired = models.BooleanField(default=False, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.name} ({self.license_plate})"
+
 
 class ActivityLog(models.Model):
     work_item = models.ForeignKey(
