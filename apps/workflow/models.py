@@ -83,6 +83,33 @@ class Vehicle(models.Model):
         return f"{self.name} ({self.license_plate})"
 
 
+class Driver(models.Model):
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="driver_profile",
+    )
+
+    license_expiry = models.DateField()
+
+    safety_score = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=100.00,
+        help_text="Driver safety score (0-100)",
+    )
+
+    is_suspended = models.BooleanField(default=False, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["user__username"]
+
+    def __str__(self):
+        return f"{self.user.username} (Driver)"
+
+
 class ActivityLog(models.Model):
     work_item = models.ForeignKey(
         WorkItem,
