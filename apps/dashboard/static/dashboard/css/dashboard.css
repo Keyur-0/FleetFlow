@@ -299,3 +299,54 @@ textarea:focus {
 .status-closed {
     background-color: #16a34a;
 }
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: #4f7c8a;
+    color: white;
+}
+
+.menu-toggle {
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 15px;
+}
+
+.brand {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.logout-btn {
+    background: white;
+    color: #333;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 220px;
+    height: 100%;
+    background: #1f2a30;
+    padding-top: 70px;
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar a {
+    color: white;
+    padding: 15px 20px;
+    text-decoration: none;
+}
+
+.sidebar a:hover {
+    background: #2f3e46;
+}

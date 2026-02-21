@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Operational Reports{% endblock %}
+{% block content %}
+
+<h1>Operational & Financial Reports</h1>
+
+<div class="grid">
+    <div class="card">
+        <h2>Fuel Cost Trend</h2>
+        <canvas id="fuelChart"></canvas>
+    </div>
+
+    <div class="card">
+        <h2>Revenue Trend</h2>
+        <canvas id="revenueChart"></canvas>
+    </div>
+
+    <div class="card">
+        <h2>Maintenance Trend</h2>
+        <canvas id="maintenanceChart"></canvas>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Top 5 Costliest Vehicles</h2>
+    <canvas id="vehicleChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const vehicleLabels = {{ vehicle_labels|safe }};
+const vehicleValues = {{ vehicle_values|safe }};
+
+const fuelData = {{ fuel_data|safe }};
+const revenueData = {{ revenue_data|safe }};
+const maintenanceData = {{ maintenance_data|safe }};
+
+function extractLabels(data) {
+    return data.map(item => item.month.substring(0,7));
+}
+
+function extractValues(data) {
+    return data.map(item => item.total || 0);
+}
+
+new Chart(document.getElementById('fuelChart'), {
+    type: 'line',
+    data: {
+        labels: extractLabels(fuelData),
+        datasets: [{
+            label: 'Fuel Cost',
+            data: extractValues(fuelData),
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+        }]
+    }
+});
+
+new Chart(document.getElementById('revenueChart'), {
+    type: 'line',
+    data: {
+        labels: extractLabels(revenueData),
+        datasets: [{
+            label: 'Revenue',
+            data: extractValues(revenueData),
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+        }]
+    }
+});
+
+new Chart(document.getElementById('maintenanceChart'), {
+    type: 'line',
+    data: {
+        labels: extractLabels(maintenanceData),
+        datasets: [{
+            label: 'Maintenance Cost',
+            data: extractValues(maintenanceData),
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+        }]
+    }
+});
+
+new Chart(document.getElementById('vehicleChart'), {
+    type: 'bar',
+    data: {
+        labels: vehicleLabels,
+        datasets: [{
+            label: 'Operational Cost',
+            data: vehicleValues,
+        }]
+    }
+});
+</script>
+{% endblock %}
