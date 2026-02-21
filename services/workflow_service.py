@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from apps.workflow.models import WorkItem, ActivityLog
+from apps.workflow.models import MaintenanceLog
 
 ALLOWED_TRANSITIONS = {
     WorkItem.TripStatus.DRAFT: [
@@ -38,6 +39,8 @@ def transition(work_item, new_status, user):
         if not work_item.driver:
             raise ValidationError("Driver must be selected.")
 
+
+
         # Driver compliance checks
         if not work_item.driver.is_license_valid():
             raise ValidationError("Driver license has expired.")
@@ -47,7 +50,19 @@ def transition(work_item, new_status, user):
 
         if work_item.driver.status == work_item.driver.Status.OFF_DUTY:
             raise ValidationError("Driver is off duty.")
-        
+
+        if work_item.vehicle.is_retired:
+            raise ValidationError("Retired vehicles cannot be dispatched.")
+
+
+        active_maintenance = MaintenanceLog.objects.filter(
+            vehicle=work_item.vehicle,
+            status=MaintenanceLog.Status.OPEN
+        ).exists()
+
+        if active_maintenance:
+            raise ValidationError("Vehicle is currently in maintenance.")
+
         vehicle_active_trip = WorkItem.objects.filter(
             vehicle=work_item.vehicle,
             status__in=[
