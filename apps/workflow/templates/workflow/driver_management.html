@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Driver Management</h1>
+
+<div class="card">
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>License Expiry</th>
+            <th>License Valid</th>
+            <th>Active Trips</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for driver in drivers %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ driver.user.username }}</td>
+            <td>{{ driver.get_status_display }}</td>
+            <td>{{ driver.license_expiry }}</td>
+            <td>
+                {% if driver.is_license_valid %}
+                    <span class="status-pill status-completed">Valid</span>
+                {% else %}
+                    <span class="status-pill status-cancelled">Expired</span>
+                {% endif %}
+            </td>
+            <td>{{ driver.trips.count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock %}

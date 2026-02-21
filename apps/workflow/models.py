@@ -28,6 +28,25 @@ class WorkItem(models.Model):
         COMPLETED = "COMPLETED", "Completed"
         CANCELLED = "CANCELLED", "Cancelled"
 
+
+    origin = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    destination = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+    estimated_fuel_cost = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+
     title = models.CharField(max_length=255)
     description = models.TextField()
 
@@ -103,6 +122,20 @@ class Vehicle(models.Model):
         VAN = "VAN", "Van"
         BIKE = "BIKE", "Bike"
 
+
+    class Status(models.TextChoices):
+        AVAILABLE = "AVAILABLE", "Available"
+        ON_TRIP = "ON_TRIP", "On Trip"
+        IN_SHOP = "IN_SHOP", "In Shop"
+        RETIRED = "RETIRED", "Retired"
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.AVAILABLE,
+        db_index=True,
+    )
+
     name = models.CharField(max_length=100)
 
     license_plate = models.CharField(
@@ -129,7 +162,6 @@ class Vehicle(models.Model):
     )
 
     odometer_current = models.PositiveIntegerField()
-    is_retired = models.BooleanField(default=False, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:

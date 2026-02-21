@@ -6,8 +6,27 @@
 {% block content %}
 
 <h1>Fleet Overview</h1>
-
 <div class="grid">
+
+    <div class="card">
+        <h2>Active Fleet</h2>
+        <p>{{ active_fleet }}</p>
+    </div>
+
+    <div class="card">
+        <h2>Maintenance Alerts</h2>
+        <p>{{ maintenance_alerts }}</p>
+    </div>
+
+    <div class="card">
+        <h2>Utilization Rate</h2>
+        <p>{{ utilization_rate|floatformat:2 }}%</p>
+    </div>
+
+    <div class="card">
+        <h2>Pending Cargo</h2>
+        <p>{{ pending_cargo }}</p>
+    </div>
 
     <div class="card">
         <h2>Total Revenue</h2>
@@ -27,25 +46,9 @@
     </div>
 
     <div class="card">
-        <h2>Active Vehicles</h2>
-        <p>{{ active_vehicles }}</p>
-    </div>
-
-    <div class="card">
-        <h2>Vehicles in Maintenance</h2>
-        <p>{{ vehicles_in_maintenance }}</p>
-    </div>
-
-    <div class="card">
-        <h2>Active Trips</h2>
-        <p>{{ active_trips }}</p>
-    </div>
-
-    <div class="card">
         <h2>Fuel Cost This Month</h2>
         <p>₹{{ fuel_cost_this_month|intcomma }}</p>
     </div>
 
 </div>
-
 {% endblock %}

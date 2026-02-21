@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Maintenance Management{% endblock %}
+
+{% block content %}
+
+<h1>Maintenance & Service Logs</h1>
+
+<!-- Maintenance Table -->
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Vehicle</th>
+                <th>Description</th>
+                <th>Cost</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Closed</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for m in maintenances %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ m.vehicle }}</td>
+                <td>{{ m.description }}</td>
+                <td>₹{{ m.cost }}</td>
+                <td>
+                    <span class="status-pill status-{{ m.status|lower }}">
+                        {{ m.get_status_display }}
+                    </span>
+                </td>
+                <td>{{ m.created_at }}</td>
+                <td>{{ m.closed_at|default:"—" }}</td>
+                <td>
+                    {% if m.status == "OPEN" %}
+                        <a href="{% url 'close_maintenance' m.id %}" class="btn-secondary">
+                            Close
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="8">No maintenance records.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- New Maintenance Form -->
+<div class="card">
+    <h2>New Maintenance Record</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-primary">
+            Create Maintenance
+        </button>
+    </form>
+</div>
+
+{% endblock %}

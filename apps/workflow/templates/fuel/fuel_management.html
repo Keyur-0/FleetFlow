@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Fuel Management{% endblock %}
+
+{% block content %}
+
+<h1>Fuel Management</h1>
+
+<!-- Fuel Log Table -->
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Vehicle</th>
+                <th>Trip</th>
+                <th>Liters</th>
+                <th>Cost</th>
+                <th>Odometer</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for log in fuel_logs %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ log.vehicle }}</td>
+                <td>{{ log.trip|default:"—" }}</td>
+                <td>{{ log.liters }} L</td>
+                <td>₹{{ log.cost }}</td>
+                <td>{{ log.odometer_reading }} km</td>
+                <td>{{ log.date }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7">No fuel logs available.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p style="margin-top: 20px;">
+        <strong>Total Fuel Cost:</strong> ₹{{ total_fuel_cost }}
+    </p>
+</div>
+
+<!-- Add Fuel Log Form -->
+<div class="card">
+    <h2>Add Fuel Log</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-primary">
+            Add Fuel Entry
+        </button>
+    </form>
+</div>
+
+{% endblock %}

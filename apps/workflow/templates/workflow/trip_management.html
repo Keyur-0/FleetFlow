@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Trip Management{% endblock %}
+
+{% block content %}
+
+<h1>Trip Dispatcher & Management</h1>
+
+<!-- Search / Filter Row -->
+<div class="card">
+    <div class="table-controls">
+        <input type="text" placeholder="Search trips..." class="search-input">
+        <button class="btn-secondary">Group By</button>
+        <button class="btn-secondary">Filter</button>
+        <button class="btn-secondary">Sort By</button>
+    </div>
+</div>
+
+<!-- Trip Table -->
+<div class="card">
+    <table class="trip-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Fleet Type</th>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <thead>
+<tr>
+    <th>#</th>
+    <th>Vehicle</th>
+    <th>Origin</th>
+    <th>Destination</th>
+    <th>Driver</th>
+    <th>Status</th>
+</tr>
+</thead>
+    <tbody>
+    {% for trip in trips %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ trip.vehicle }}</td>
+        <td>{{ trip.origin }}</td>
+        <td>{{ trip.destination }}</td>
+        <td>{{ trip.driver }}</td>
+        <td>
+            <span class="status-pill status-{{ trip.status|lower }}">
+                {{ trip.get_status_display }}
+            </span>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="6">No trips available.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+</div>
+
+<!-- New Trip Form -->
+<div class="card">
+    <h2>New Trip Form</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-primary">
+            Confirm & Dispatch Trip
+        </button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Vehicles{% endblock %}
+
+{% block content %}
+
+<h1>Vehicle Registry</h1>
+
+<div class="grid">
+
+{% for vehicle in vehicles %}
+    <div class="card">
+        <h2>{{ vehicle.name }}</h2>
+        <p>Plate: {{ vehicle.license_plate }}</p>
+        <p>Type: {{ vehicle.get_vehicle_type_display }}</p>
+        <p>Status: {{ vehicle.get_status_display }}</p>
+        <p>Capacity: {{ vehicle.max_capacity }} kg</p>
+        <p>Odometer: {{ vehicle.odometer_current }} km</p>
+    </div>
+{% empty %}
+    <p>No vehicles found.</p>
+{% endfor %}
+
+</div>
+
+{% endblock %}
