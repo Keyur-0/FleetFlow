@@ -22,6 +22,49 @@ class WorkItem(models.Model):
         db_index=True,
     )
 
+    # 🔥 NEW FIELDS
+
+    vehicle = models.ForeignKey(
+        "Vehicle",
+        on_delete=models.PROTECT,
+        related_name="trips",
+        null=True,
+        blank=True,
+    )
+
+    driver = models.ForeignKey(
+        "Driver",
+        on_delete=models.PROTECT,
+        related_name="trips",
+        null=True,
+        blank=True,
+    )
+
+    cargo_weight = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Cargo weight in kg"
+    )
+
+    start_odometer = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+    )
+
+    end_odometer = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+    )
+
+    revenue = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -33,12 +76,11 @@ class WorkItem(models.Model):
 
     class Meta:
         indexes = [
-        models.Index(fields=["status", "created_at"]),
+            models.Index(fields=["status", "created_at"]),
         ]
 
     def __str__(self):
-        return f"{self.title} ({self.status})"
-    
+        return f"{self.title} ({self.status})"    
 
 class Vehicle(models.Model):
 
